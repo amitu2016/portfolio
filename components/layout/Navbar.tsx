@@ -31,7 +31,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-mono text-primary font-semibold">
           <Terminal className="h-5 w-5" />
-          <span>amit.dev</span>
+          <span>amitupadhyay.co.in</span>
         </Link>
 
         {/* Desktop nav */}
