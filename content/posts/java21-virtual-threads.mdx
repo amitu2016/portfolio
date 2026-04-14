@@ -1,0 +1,129 @@
+---
+title: "Monolith to Microservices: Lessons from 7 Years of Migration at CDAC"
+excerpt: "A candid account of leading the decomposition of large monolithic systems into Kubernetes-deployed microservices at CDAC Mumbai — the technical decisions, the surprises, and what I'd do differently."
+date: "2025-07-22"
+tags: ["microservices", "kubernetes", "spring-boot", "java", "cdac"]
+readTime: 11
+---
+
+## Context
+
+Over 7 years at CDAC Mumbai, I led the technical modernization of several large Java monoliths into cloud-native microservices. These systems served real government and enterprise users, so downtime was not an option and rollback plans were mandatory. This post is a reflection on what worked, what didn't, and the patterns that proved their worth in production.
+
+## Why We Migrated
+
+The monoliths had the classic symptoms: deployments took hours and were high-risk, a bug in one module could crash the entire application, teams stepped on each other's database tables, and scaling required scaling everything — even the parts with no load.
+
+The business case was straightforward. The engineering challenge was everything else.
+
+## Phase 1: Strangler Fig, Not Big Bang
+
+The first and most important decision was **not to rewrite the monolith**. Every "big bang" rewrite I've seen ends up taking 3× the estimated time and ships with 50% of the original features. Instead, we used the Strangler Fig pattern:
+
+1. Put an API Gateway (Spring Cloud Gateway) in front of the monolith.
+2. Extract one domain at a time as a new microservice.
+3. The gateway routes requests to the new service for that domain, the monolith for everything else.
+4. Repeat until the monolith is empty.
+
+This approach meant production traffic was always flowing through working code. The monolith shrank gradually over 18 months rather than being replaced overnight.
+
+## Phase 2: Containerization with Docker
+
+Before Kubernetes, we needed consistent environments. Our monolith had a well-known problem: "works on my machine." We solved this by containerizing each new microservice from day one.
+
+A key discipline we established early: **the Dockerfile is the deployment spec**. Everything the service needs — JVM flags, environment variables, health check endpoints — is in the Dockerfile and `docker-compose.yml`. No tribal knowledge.
+
+```dockerfile
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY target/*.jar app.jar
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -XX:+UseG1GC"
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+```
+
+The `MaxRAMPercentage` flag is critical in containers — without it, the JVM reads total host RAM (not the container limit) and allocates a heap that will trigger OOM kills.
+
+## Phase 3: Kubernetes Orchestration with Helm
+
+Kubernetes gave us declarative deployments, automatic restarts, and horizontal scaling. We templated every service with Helm charts so configuration differences between environments (dev, staging, prod) were handled by values files, not by editing YAML.
+
+A pattern that saved us repeatedly: **always define resource requests AND limits.**
+
+```yaml
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+```
+
+Without limits, a runaway service can starve its neighbours on the same node. Without requests, the scheduler makes poor placement decisions. We learned this the hard way after a memory-leaking service caused cascading pod evictions on a shared node.
+
+## Phase 4: CI/CD with Jenkins
+
+We built a Jenkins pipeline that covered the full delivery cycle:
+
+```groovy
+pipeline {
+    stages {
+        stage('Build')    { steps { sh 'mvn clean package -DskipTests' } }
+        stage('Test')     { steps { sh 'mvn verify' } }
+        stage('Scan')     { steps { sh 'mvn sonar:sonar' } }
+        stage('Docker')   { steps { sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .' } }
+        stage('Deploy')   { steps { sh 'helm upgrade --install $SERVICE helm/ -f values-$ENV.yaml' } }
+    }
+}
+```
+
+The discipline of **one pipeline per service** was important. Shared pipelines create coupling; when one service's build breaks, others are blocked. Each service owns its pipeline and deploys independently.
+
+## Security: OAuth 2.0 and JWT for Third-Party APIs
+
+Several services needed secure, scalable authentication for third-party consumers. We implemented OAuth 2.0 with Spring Security's Authorization Server (before it became a separate project) and issued short-lived JWTs signed with RS256.
+
+Key decisions:
+- **Stateless tokens** — no session storage required, scales horizontally.
+- **Short expiry (15 minutes) + refresh tokens** — compromised access tokens expire quickly.
+- **Scope-based authorization** — each third-party client gets only the scopes it needs.
+
+```java
+@Bean
+public SecurityFilterChain apiSecurityChain(HttpSecurity http) throws Exception {
+    return http
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/v1/public/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+        .build();
+}
+```
+
+## Observability: ELK Stack
+
+After microservices proliferate, logs become your primary debugging tool — but only if they're centralized and structured. We deployed the ELK stack (Elasticsearch, Logstash, Kibana) and mandated structured JSON logging across all services:
+
+```java
+// Every log line includes correlation ID, service name, trace ID
+log.info("Payment processed",
+    kv("correlationId", correlationId),
+    kv("transactionId", txnId),
+    kv("durationMs", duration),
+    kv("status", "SUCCESS")
+);
+```
+
+Kibana dashboards gave the team one place to watch all services, and correlation IDs let us trace a user journey across service boundaries.
+
+## What I'd Do Differently
+
+1. **Define service boundaries first** — we extracted some services that were too granular, which created chatty HTTP-over-the-network calls that would have been fine as in-process calls.
+2. **Invest in contract testing earlier** — Pact tests between producer and consumer services would have caught breaking API changes before they hit staging.
+3. **Treat the database as the hardest part** — shared databases are the last thing to migrate and the most dangerous. We should have planned data ownership from day one.
+
+Migration is never "done" — it's a continuous process of improving what you shipped last quarter.

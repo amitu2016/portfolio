@@ -1,0 +1,114 @@
+---
+title: "Building a Resilience & Utility Library for Banking Microservices"
+excerpt: "How I architected a custom shared library at HDFC Bank to standardize cross-cutting concerns — retry, exponential backoff, circuit breakers, DB warmup, and observability hooks — across a fleet of microservices."
+date: "2025-09-10"
+tags: ["spring-boot", "resilience4j", "distributed-systems", "java", "hdfc-bank"]
+readTime: 9
+---
+
+## The Problem
+
+When you run multiple microservices in a production banking environment, you quickly discover that every team solves the same cross-cutting problems independently. At HDFC Bank, the pattern was clear: unstandardized retry logic, inconsistently configured circuit breakers, and no common approach to cold-start latency. The divergence caused real instability — bugs fixed in one service would reappear in others, and services would fail in unpredictable ways under load.
+
+The answer was a **Resilience & Utility Library** — a Spring Boot starter that every service pulls in as a single dependency.
+
+## Design Goals
+
+Before writing a line of code, we agreed on three constraints:
+
+1. **Zero forced transitive conflicts.** Services manage their own dependency versions. The library must not impose them.
+2. **Opt-in everything.** Each feature is behind a `@ConditionalOnProperty`. If you don't configure it, it doesn't load.
+3. **Observable by default.** Every primitive automatically exposes Prometheus metrics via Micrometer.
+
+## Configurable Retry with Exponential Backoff
+
+The retry engine is the most-used primitive. Services configure it declaratively:
+
+```yaml
+resilience:
+  retry:
+    enabled: true
+    max-attempts: 3
+    initial-interval-ms: 200
+    multiplier: 2.0
+    max-interval-ms: 5000
+    retryable-exceptions:
+      - java.net.ConnectException
+      - org.springframework.dao.TransientDataAccessException
+```
+
+The AOP interceptor wraps any `@Retryable`-annotated method with this policy. The key design decision: **exponential backoff with jitter**. Without jitter, all retrying services hit the downstream at the same intervals and create synchronized retry storms.
+
+```java
+long delay = Math.min(
+    (long) (initialInterval * Math.pow(multiplier, attempt)),
+    maxInterval
+);
+// Add ±20% jitter to desynchronize retries
+long jitter = (long) (delay * 0.2 * (Math.random() - 0.5));
+Thread.sleep(delay + jitter);
+```
+
+## Circuit Breakers
+
+We wrapped Resilience4j's `CircuitBreaker` with a minimum-calls guard that prevents false trips on low-traffic paths:
+
+```java
+CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+    .failureRateThreshold(50)
+    .slowCallRateThreshold(70)
+    .slowCallDurationThreshold(Duration.ofSeconds(2))
+    .minimumNumberOfCalls(20) // don't open on 1-of-2 failures at 2 AM
+    .slidingWindowType(SlidingWindowType.TIME_BASED)
+    .slidingWindowSize(60)
+    .build();
+```
+
+The `minimumNumberOfCalls(20)` is the critical guard. Low-traffic services were tripping breakers on statistical noise — two failures out of four calls is not a real outage.
+
+## Automated Database Warmup
+
+Cold-start latency was a recurring complaint. When a pod restarts, the first few requests see high latency as HikariCP lazily establishes connections to PostgreSQL and Yugabyte DB. We solved this with a `SmartLifecycle` bean that runs at startup:
+
+```java
+@Component
+public class DatabaseWarmup implements SmartLifecycle {
+
+    @Override
+    public void start() {
+        log.info("Warming up database connection pool...");
+        IntStream.range(0, dataSourceProperties.getMinIdle())
+            .parallel()
+            .forEach(i -> {
+                try (Connection c = dataSource.getConnection()) {
+                    c.createStatement().execute("SELECT 1");
+                } catch (SQLException e) {
+                    log.warn("Warmup connection {} failed: {}", i, e.getMessage());
+                }
+            });
+        log.info("Database warmup complete — pool is hot.");
+        running = true;
+    }
+}
+```
+
+This runs before Kubernetes marks the pod as `Ready`, so the readiness probe only passes once the pool is warm. Cold-start latency dropped to zero in production.
+
+## Standardized Observability Hooks
+
+Every feature auto-registers Micrometer metrics. No service needs to instrument itself:
+
+- `resilience.retry.attempts` (counter, tagged by service + method)
+- `resilience.circuit-breaker.state` (gauge: 0=closed, 1=open, 2=half-open)
+- `db.warmup.duration` (timer)
+
+These feed directly into the Prometheus/Grafana dashboards we configured, giving the platform team visibility across all services without any per-service instrumentation effort.
+
+## Results
+
+After rollout:
+- **Cold-start latency eliminated** — Database Warmup proved immediately effective at pod restarts.
+- **Service stability improved** — standardized retry + backoff removed thundering-herd retry storms between dependent services.
+- **Operational overhead reduced** — one library to update instead of patching retry logic in N services.
+
+The library is under 6,000 lines of code with high test coverage. The biggest lesson: shared infrastructure code must be *more* conservative than application code. When it breaks, everything breaks.
