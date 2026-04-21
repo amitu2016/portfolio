@@ -51,8 +51,12 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground antialiased;
+    overflow-x: hidden;
   }
 
   /* Scrollbar styling for dark theme */
@@ -67,6 +71,26 @@
     @apply bg-border rounded-full;
   }
 }
+
+/* Aurora blob animations */
+@keyframes aurora {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  33%       { transform: translate(40px, -40px) scale(1.08); opacity: 0.6; }
+  66%       { transform: translate(-25px, 25px) scale(0.94); opacity: 0.3; }
+}
+@keyframes aurora2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  40%       { transform: translate(-35px, 30px) scale(1.06); opacity: 0.5; }
+  70%       { transform: translate(20px, -20px) scale(0.96); opacity: 0.25; }
+}
+@keyframes aurora3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
+  50%       { transform: translate(20px, 40px) scale(1.1); opacity: 0.45; }
+}
+
+.aurora-1 { animation: aurora  9s ease-in-out infinite; }
+.aurora-2 { animation: aurora2 13s ease-in-out infinite; }
+.aurora-3 { animation: aurora3 11s ease-in-out 2s infinite; }
 
 /* React Flow dark overrides */
 .react-flow__background {

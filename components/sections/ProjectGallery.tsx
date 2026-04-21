@@ -31,7 +31,7 @@ export function ProjectGallery() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
             >
-              <Card className="h-full flex flex-col border-border/60 bg-card/80 hover:border-primary/40 transition-colors group">
+              <Card className="h-full flex flex-col border-border/60 bg-card/80 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 group">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-base leading-snug group-hover:text-primary transition-colors">
@@ -90,10 +90,10 @@ export function ProjectGallery() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
             >
-              <Card className="border-border/40 bg-card/60 hover:border-primary/30 transition-colors">
+              <Card className="border-border/40 bg-card/60 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/8 transition-all duration-300 group">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-semibold">{project.title}</h4>
+                    <h4 className="text-sm font-semibold group-hover:text-primary transition-colors">{project.title}</h4>
                     <span className="text-[10px] font-mono uppercase text-muted-foreground border border-border rounded px-1.5 py-0.5">
                       {project.category}
                     </span>

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -26,6 +27,9 @@ export function MetricCard({
   className,
   index = 0,
 }: MetricCardProps) {
+  const numericValue = typeof value === "number" ? value : parseFloat(String(value));
+  const isNumeric = !isNaN(numericValue);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -33,7 +37,7 @@ export function MetricCard({
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
     >
-      <Card className={cn("border-border/60 bg-card/80", className)}>
+      <Card className={cn("border-border/60 bg-card/80 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/8 transition-all duration-300", className)}>
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div>
@@ -41,7 +45,11 @@ export function MetricCard({
                 {label}
               </p>
               <p className="mt-1 text-2xl font-bold font-mono">
-                {value}
+                {isNumeric ? (
+                  <AnimatedCounter to={numericValue} duration={1.8} />
+                ) : (
+                  value
+                )}
                 {unit && <span className="ml-1 text-sm font-normal text-muted-foreground">{unit}</span>}
               </p>
               {trendLabel && (

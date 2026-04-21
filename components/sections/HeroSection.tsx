@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowDown, Bot, Download, Github, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TechBadge } from "@/components/shared/TechBadge";
+import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { siteConfig } from "@/config/site";
 
 const CORE_SKILLS = [
@@ -18,6 +19,13 @@ const CORE_SKILLS = [
   "OpenTelemetry",
 ];
 
+const STATS = [
+  { label: "Years Experience", value: 8, suffix: "+" },
+  { label: "Microservices", value: 50, suffix: "+" },
+  { label: "Peak TPS", value: 8000, suffix: "+" },
+  { label: "Uptime SLO", value: 99, suffix: ".9%" },
+];
+
 const container = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -27,18 +35,22 @@ const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
 export function HeroSection() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
+      {/* Aurora blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="aurora-1 absolute top-1/4 left-1/4 h-[500px] w-[500px] rounded-full bg-primary/8 blur-[100px]" />
+        <div className="aurora-2 absolute top-1/2 right-1/4 h-[400px] w-[400px] rounded-full bg-blue-500/6 blur-[90px]" />
+        <div className="aurora-3 absolute bottom-1/4 left-1/2 h-[350px] w-[350px] rounded-full bg-indigo-500/5 blur-[80px]" />
+      </div>
+
       {/* Grid background */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        className="pointer-events-none absolute inset-0 opacity-[0.025]"
         style={{
           backgroundImage:
             "linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
-
-      {/* Glow */}
-      <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
 
       <motion.div
         variants={container}
@@ -70,7 +82,7 @@ export function HeroSection() {
         </motion.p>
 
         {/* Name */}
-        <motion.h1 variants={item} className="text-5xl font-bold tracking-tight md:text-7xl">
+        <motion.h1 variants={item} className="text-4xl font-bold tracking-tight sm:text-5xl md:text-7xl">
           Amit{" "}
           <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
             Upadhyay
@@ -80,14 +92,33 @@ export function HeroSection() {
         {/* Tagline */}
         <motion.p
           variants={item}
-          className="max-w-2xl text-lg text-muted-foreground md:text-xl"
+          className="max-w-2xl text-base text-muted-foreground md:text-xl px-4 sm:px-0"
         >
-          Building resilient cloud-native systems for banking at scale.
-          <br />
+          Building resilient cloud-native systems for banking at scale.{" "}
           <span className="font-mono text-primary/80">HDFC Bank</span> ·{" "}
           <span className="font-mono text-primary/80">CDAC Mumbai</span> · Java · Spring Boot ·
           Microservices.
         </motion.p>
+
+        {/* Stats row */}
+        <motion.div
+          variants={item}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-2xl px-4 sm:px-0"
+        >
+          {STATS.map((stat) => (
+            <div
+              key={stat.label}
+              className="flex flex-col items-center rounded-xl border border-border/50 bg-card/40 px-4 py-3 backdrop-blur-sm"
+            >
+              <span className="text-2xl font-bold font-mono text-foreground">
+                <AnimatedCounter to={stat.value} suffix={stat.suffix} duration={1.8} />
+              </span>
+              <span className="mt-0.5 text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </motion.div>
 
         {/* Skill badges */}
         <motion.div variants={item} className="flex flex-wrap justify-center gap-2 max-w-xl">
@@ -97,17 +128,17 @@ export function HeroSection() {
         </motion.div>
 
         {/* CTA buttons */}
-        <motion.div variants={item} className="flex flex-wrap justify-center gap-3">
-          <Button size="lg" asChild>
+        <motion.div variants={item} className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 w-full sm:w-auto px-4 sm:px-0">
+          <Button size="lg" className="w-full sm:w-auto" asChild>
             <a href="#projects">View Projects</a>
           </Button>
-          <Button size="lg" variant="outline" asChild>
+          <Button size="lg" variant="outline" className="w-full sm:w-auto" asChild>
             <a href={siteConfig.resumeUrl} download>
               <Download className="mr-2 h-4 w-4" />
               Download Resume
             </a>
           </Button>
-          <Button size="lg" variant="ghost" id="open-chat" aria-label="Chat with AI">
+          <Button size="lg" variant="ghost" id="open-chat" aria-label="Chat with AI" className="w-full sm:w-auto">
             <Bot className="mr-2 h-4 w-4" />
             Ask the AI
           </Button>

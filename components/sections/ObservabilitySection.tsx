@@ -154,7 +154,7 @@ export function ObservabilitySection() {
               <BarChart data={serviceMetrics} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} unit="ms" />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} width={140} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={120} />
                 <Tooltip
                   contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
                   labelStyle={{ color: "hsl(var(--foreground))" }}
