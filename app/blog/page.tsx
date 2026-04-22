@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllPosts, getAllTags } from "@/lib/blog/posts";
+import { getAllPosts } from "@/lib/blog/posts";
 import { PostCard } from "@/components/blog/PostCard";
 import { TagBadge } from "@/components/blog/TagBadge";
 import { SectionHeading } from "@/components/shared/SectionHeading";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   const posts = getAllPosts();
-  const tags = getAllTags();
+  const tags = Array.from(new Set(posts.flatMap((p) => p.tags))).sort();
 
   return (
     <div className="min-h-screen pt-24 pb-16">

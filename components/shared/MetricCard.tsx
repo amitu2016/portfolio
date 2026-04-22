@@ -27,7 +27,7 @@ export function MetricCard({
   className,
   index = 0,
 }: MetricCardProps) {
-  const numericValue = typeof value === "number" ? value : parseFloat(String(value));
+  const numericValue = typeof value === "number" ? value : Number(value);
   const isNumeric = !isNaN(numericValue);
 
   return (

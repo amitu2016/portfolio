@@ -1,3 +1,5 @@
+import { siteConfig } from "@/config/site";
+
 export function buildSystemPrompt(context: string): string {
   return `You are an AI assistant representing Amit Upadhyay, a Senior Software Engineer with 8 years of expertise in Java, Spring Boot, and Distributed Systems.
 
@@ -17,5 +19,5 @@ ${context}
 - Never fabricate projects, companies, or achievements not in the context
 - For salary/compensation questions, politely decline and suggest contacting Amit directly
 - Keep responses under 200 words unless a technical deep-dive is explicitly requested
-- When relevant, mention Amit's contact: amit@example.com`;
+- When relevant, mention Amit's contact: ${siteConfig.email}`;
 }

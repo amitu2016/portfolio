@@ -17,26 +17,19 @@ function generateLatencyData(
   });
 }
 
+const TRAFFIC_PROFILE: [number, number][] = [
+  [6, 0.3], [9, 0.7], [12, 0.9], [14, 1.2], [17, 1.0], [20, 1.3],
+];
+
+function trafficMultiplier(hour: number): number {
+  return TRAFFIC_PROFILE.find(([h]) => hour < h)?.[1] ?? 0.6;
+}
+
 function generateThroughputData(baseRps: number, points = 24): MetricDataPoint[] {
   return Array.from({ length: points }, (_, i) => {
     const hour = i.toString().padStart(2, "0") + ":00";
-    // Simulate realistic banking traffic pattern (low at night, peaks at noon & 7pm)
-    const trafficMultiplier =
-      i < 6
-        ? 0.3
-        : i < 9
-          ? 0.7
-          : i < 12
-            ? 0.9
-            : i < 14
-              ? 1.2
-              : i < 17
-                ? 1.0
-                : i < 20
-                  ? 1.3
-                  : 0.6;
     const jitter = 0.9 + Math.random() * 0.2;
-    return { time: hour, value: Math.round(baseRps * trafficMultiplier * jitter) };
+    return { time: hour, value: Math.round(baseRps * trafficMultiplier(i) * jitter) };
   });
 }
 
@@ -45,7 +38,7 @@ function generateErrorRateData(baseRate: number, points = 24): MetricDataPoint[]
     const hour = i.toString().padStart(2, "0") + ":00";
     const spike = i === 3 ? 5 : 1; // simulate a 3am anomaly
     const jitter = 0.5 + Math.random() * 1.5;
-    return { time: hour, value: parseFloat((baseRate * spike * jitter).toFixed(3)) };
+    return { time: hour, value: Math.round(baseRate * spike * jitter * 1000) / 1000 };
   });
 }
 

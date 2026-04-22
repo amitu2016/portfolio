@@ -20,35 +20,35 @@ function parsePost(slug: string, raw: string): BlogPost {
 }
 
 export function getAllPosts(): BlogPost[] {
-  if (!fs.existsSync(POSTS_DIR)) return [];
+  let files: string[];
+  try {
+    files = fs.readdirSync(POSTS_DIR);
+  } catch {
+    return [];
+  }
 
-  return fs
-    .readdirSync(POSTS_DIR)
+  return files
     .filter((f) => f.endsWith(".mdx"))
     .map((filename) => {
       const slug = filename.replace(/\.mdx$/, "");
       const raw = fs.readFileSync(path.join(POSTS_DIR, filename), "utf8");
-      const post = parsePost(slug, raw);
-      // Strip content for the index listing
-      const { content: _, ...meta } = post;
+      const { content: _, ...meta } = parsePost(slug, raw);
       return meta as BlogPost;
     })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function getPostBySlug(slug: string): BlogPost | null {
-  const filePath = path.join(POSTS_DIR, `${slug}.mdx`);
-  if (!fs.existsSync(filePath)) return null;
-  const raw = fs.readFileSync(filePath, "utf8");
-  return parsePost(slug, raw);
+  try {
+    const raw = fs.readFileSync(path.join(POSTS_DIR, `${slug}.mdx`), "utf8");
+    return parsePost(slug, raw);
+  } catch {
+    return null;
+  }
 }
 
 export function getAllSlugs(): string[] {
-  if (!fs.existsSync(POSTS_DIR)) return [];
-  return fs
-    .readdirSync(POSTS_DIR)
-    .filter((f) => f.endsWith(".mdx"))
-    .map((f) => f.replace(/\.mdx$/, ""));
+  return getAllPosts().map((p) => p.slug);
 }
 
 export function getAllTags(): string[] {
