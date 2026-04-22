@@ -4,7 +4,7 @@ export const siteConfig = {
   description:
     "Nearly 8 years of expertise in Java, Spring Boot, and cloud-native distributed systems. Senior Manager at HDFC Bank, specializing in resilient microservices and enterprise observability.",
   url: "https://amitupadhyay.co.in",
-  github: "https://github.com/amitupadhyay",
+  github: "https://github.com/amitu2016",
   linkedin: "https://linkedin.com/in/upadhyayamitk/",
   email: "amitu2016@gmail.com",
   medium: "https://medium.com/@amitu2016",
