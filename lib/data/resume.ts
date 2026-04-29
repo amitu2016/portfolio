@@ -9,11 +9,11 @@ export const resume: Resume = {
   linkedin: "https://linkedin.com/in/upadhyayamitk/",
 
   summary:
-    "Results-driven Senior Backend Engineer with nearly 8 years of expertise in designing and deploying cloud-native applications using microservices architecture. Currently leading backend engineering at HDFC Bank, specializing in developing resilient distributed systems and modernizing legacy architectures. Proficient in Java, Spring Boot, and enterprise-grade observability.",
+    "Results-driven Senior Backend Engineer with nearly 8 years of expertise in designing and deploying cloud-native applications using microservices architecture. Currently leading backend engineering at Indian Private bank, specializing in developing resilient distributed systems and modernizing legacy architectures. Proficient in Java, Spring Boot, and enterprise-grade observability.",
 
   experience: [
     {
-      company: "HDFC Bank",
+      company: "Indian Private bank",
       role: "Senior Manager — Backend Engineering",
       period: "July 2025 – Present",
       location: "Mumbai, India",

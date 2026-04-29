@@ -96,7 +96,7 @@ export function HeroSection() {
           className="max-w-2xl text-base text-muted-foreground md:text-xl px-4 sm:px-0"
         >
           Building resilient cloud-native systems for banking at scale.{" "}
-          <span className="font-mono text-primary/80">HDFC Bank</span> ·{" "}
+          <span className="font-mono text-primary/80">Indian Private bank</span> ·{" "}
           <span className="font-mono text-primary/80">CDAC Mumbai</span> · Java · Spring Boot ·
           Microservices.
         </motion.p>

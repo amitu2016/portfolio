@@ -21,7 +21,7 @@ export function SystemDesignSection() {
         <SectionHeading
           eyebrow="Architecture"
           title="System Design Showcase"
-          subtitle="High-concurrency microservices architecture powering 22,000 TPS at HDFC Bank — resilient by design, observable by default."
+          subtitle="High-concurrency microservices architecture powering 22,000 TPS at Indian Private bank — resilient by design, observable by default."
         />
         <ArchitectureDiagram />
         <p className="mt-4 text-center text-xs font-mono text-muted-foreground">

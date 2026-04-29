@@ -27,7 +27,7 @@ export function ObservabilitySection() {
         <SectionHeading
           eyebrow="System Health"
           title="Live Observability Dashboard"
-          subtitle="Mimicking the Grafana dashboards I built at HDFC Bank — Prometheus metrics, distributed traces, and SLO tracking across 50+ microservices."
+          subtitle="Mimicking the Grafana dashboards I built at Indian Private bank — Prometheus metrics, distributed traces, and SLO tracking across 50+ microservices."
         />
 
         {/* KPI row */}

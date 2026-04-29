@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Amit Kumar Upadhyay",
   title: "Amit Kumar Upadhyay — Senior Backend Engineer",
   description:
-    "Nearly 8 years of expertise in Java, Spring Boot, and cloud-native distributed systems. Senior Manager at HDFC Bank, specializing in resilient microservices and enterprise observability.",
+    "Nearly 8 years of expertise in Java, Spring Boot, and cloud-native distributed systems. Senior Manager at Indian Private bank, specializing in resilient microservices and enterprise observability.",
   url: "https://amitupadhyay.co.in",
   github: "https://github.com/amitu2016",
   linkedin: "https://linkedin.com/in/upadhyayamitk/",
