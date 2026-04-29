@@ -15,7 +15,7 @@ interface ChatInputProps {
 }
 
 const SUGGESTIONS = [
-  "What did Amit do at Indian Private bank?",
+  "What did Amit do at an Indian Private bank?",
   "Tell me about his Java expertise.",
   "What are his distributed systems skills?",
 ];

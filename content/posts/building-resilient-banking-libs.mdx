@@ -1,6 +1,6 @@
 ---
 title: "Building a Resilience & Utility Library for Banking Microservices"
-excerpt: "How I architected a custom shared library at Indian Private bank to standardize cross-cutting concerns — retry, exponential backoff, circuit breakers, DB warmup, and observability hooks — across a fleet of microservices."
+excerpt: "How I architected a custom shared library at an Indian Private bank to standardize cross-cutting concerns — retry, exponential backoff, circuit breakers, DB warmup, and observability hooks — across a fleet of microservices."
 date: "2025-09-10"
 tags: ["spring-boot", "resilience4j", "distributed-systems", "java", "hdfc-bank"]
 readTime: 9
@@ -8,7 +8,7 @@ readTime: 9
 
 ## The Problem
 
-When you run multiple microservices in a production banking environment, you quickly discover that every team solves the same cross-cutting problems independently. At Indian Private bank, the pattern was clear: unstandardized retry logic, inconsistently configured circuit breakers, and no common approach to cold-start latency. The divergence caused real instability — bugs fixed in one service would reappear in others, and services would fail in unpredictable ways under load.
+When you run multiple microservices in a production banking environment, you quickly discover that every team solves the same cross-cutting problems independently. At an Indian Private bank, the pattern was clear: unstandardized retry logic, inconsistently configured circuit breakers, and no common approach to cold-start latency. The divergence caused real instability — bugs fixed in one service would reappear in others, and services would fail in unpredictable ways under load.
 
 The answer was a **Resilience & Utility Library** — a Spring Boot starter that every service pulls in as a single dependency.
 

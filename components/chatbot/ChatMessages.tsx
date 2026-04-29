@@ -12,7 +12,7 @@ interface ChatMessagesProps {
   isLoading: boolean;
 }
 
-const WELCOME = "Hi! I'm Amit's AI assistant. Ask me anything about his experience at Indian Private bank, CDAC, Java expertise, system design work, or skills. How can I help?";
+const WELCOME = "Hi! I'm Amit's AI assistant. Ask me anything about his experience at an Indian Private bank, an Autonomous Society of MeitY, GOI, Java expertise, system design work, or skills. How can I help?";
 
 export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const bottomRef = useRef<HTMLDivElement>(null);

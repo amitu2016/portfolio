@@ -1,6 +1,6 @@
 # Amit Kumar Upadhyay — Portfolio
 
-Personal portfolio site for Amit Kumar Upadhyay, Senior Backend Engineer with ~8 years of expertise in Java, Spring Boot, and cloud-native distributed systems. Currently Senior Manager at Indian Private bank.
+Personal portfolio site for Amit Kumar Upadhyay, Senior Backend Engineer with ~8 years of expertise in Java, Spring Boot, and cloud-native distributed systems. Currently Senior Manager at an Indian Private bank.
 
 **Live:** https://amitupadhyay.co.in
 

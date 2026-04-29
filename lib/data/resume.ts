@@ -9,11 +9,11 @@ export const resume: Resume = {
   linkedin: "https://linkedin.com/in/upadhyayamitk/",
 
   summary:
-    "Results-driven Senior Backend Engineer with nearly 8 years of expertise in designing and deploying cloud-native applications using microservices architecture. Currently leading backend engineering at Indian Private bank, specializing in developing resilient distributed systems and modernizing legacy architectures. Proficient in Java, Spring Boot, and enterprise-grade observability.",
+    "Results-driven Senior Backend Engineer with nearly 8 years of expertise in designing and deploying cloud-native applications using microservices architecture. Currently leading backend engineering at an Indian Private bank, specializing in developing resilient distributed systems and modernizing legacy architectures. Proficient in Java, Spring Boot, and enterprise-grade observability.",
 
   experience: [
     {
-      company: "Indian Private bank",
+      company: "an Indian Private bank",
       role: "Senior Manager — Backend Engineering",
       period: "July 2025 – Present",
       location: "Mumbai, India",
@@ -38,7 +38,7 @@ export const resume: Resume = {
       ],
     },
     {
-      company: "CDAC Mumbai",
+      company: "an Autonomous Society of MeitY, GOI Mumbai",
       role: "Technical Lead",
       period: "March 2018 – June 2025",
       location: "Mumbai, India",
@@ -117,7 +117,7 @@ export const resume: Resume = {
   certifications: [
     {
       name: "Post Graduate Diploma in Advanced Computing (PG-DAC)",
-      issuer: "CDAC",
+      issuer: "an Autonomous Society of MeitY, GOI",
       year: 2018,
     },
   ],
