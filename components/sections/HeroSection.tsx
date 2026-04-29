@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowDown, Bot, Download, Github, Linkedin } from "lucide-react";
+import { ArrowDown, Bot, Building2, Clock, Download, Github, Linkedin, Network, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TechBadge } from "@/components/shared/TechBadge";
 import { MediumIcon } from "@/components/shared/MediumIcon";
@@ -21,10 +21,10 @@ const CORE_SKILLS = [
 ];
 
 const STATS = [
-  { label: "Years Experience", value: 8, suffix: "+" },
-  { label: "Microservices", value: 50, suffix: "+" },
-  { label: "Peak TPS", value: 8000, suffix: "+" },
-  { label: "Uptime SLO", value: 99, suffix: ".9%" },
+  { label: "Years Experience", value: 8, suffix: "+", icon: Clock },
+  { label: "Microservices", value: 50, suffix: "+", icon: Network },
+  { label: "Peak TPS", value: 8000, suffix: "+", icon: Zap },
+  { label: "Uptime SLO", value: 99, suffix: ".9%", icon: Shield },
 ];
 
 const container = {
@@ -95,30 +95,45 @@ export function HeroSection() {
           variants={item}
           className="max-w-2xl text-base text-muted-foreground md:text-xl px-4 sm:px-0"
         >
-          Building resilient cloud-native systems for banking at scale —{" "}
-          <span className="font-mono text-primary/80">an Indian Private bank</span> ·{" "}
-          <span className="font-mono text-primary/80">an Autonomous Society of MeitY, GOI</span> · Java · Spring Boot ·
-          Microservices.
+          Architecting resilient, cloud-native systems that power{" "}
+          <span className="font-medium text-foreground">India&apos;s banking and government fintech sector</span>{" "}
+          — engineered for high throughput, deep observability, and zero-downtime deployments.
         </motion.p>
+
+        {/* Worked-at chips */}
+        <motion.div variants={item} className="flex flex-wrap justify-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-mono text-primary/80 backdrop-blur-sm">
+            <Building2 className="h-3 w-3" />
+            Indian Private Bank
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-mono text-primary/80 backdrop-blur-sm">
+            <Shield className="h-3 w-3" />
+            Autonomous Society of MeitY, GOI
+          </span>
+        </motion.div>
 
         {/* Stats row */}
         <motion.div
           variants={item}
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-2xl px-4 sm:px-0"
         >
-          {STATS.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col items-center rounded-xl border border-border/50 bg-card/40 px-4 py-3 backdrop-blur-sm"
-            >
-              <span className="text-2xl font-bold font-mono text-foreground">
-                <AnimatedCounter to={stat.value} suffix={stat.suffix} duration={1.8} />
-              </span>
-              <span className="mt-0.5 text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                {stat.label}
-              </span>
-            </div>
-          ))}
+          {STATS.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={stat.label}
+                className="group flex flex-col items-center rounded-xl border border-border/50 bg-card/40 px-4 py-3 backdrop-blur-sm hover:border-primary/40 hover:bg-card/60 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+              >
+                <Icon className="h-4 w-4 text-primary/50 mb-1.5 group-hover:text-primary transition-colors duration-300" />
+                <span className="text-2xl font-bold font-mono text-foreground">
+                  <AnimatedCounter to={stat.value} suffix={stat.suffix} duration={1.8} />
+                </span>
+                <span className="mt-0.5 text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+                  {stat.label}
+                </span>
+              </div>
+            );
+          })}
         </motion.div>
 
         {/* Skill badges */}

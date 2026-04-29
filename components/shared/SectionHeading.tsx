@@ -36,8 +36,11 @@ export function SectionHeading({
         </p>
       )}
       <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h2>
+      <div className={cn("mt-3 flex", align === "center" ? "justify-center" : "justify-start")}>
+        <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-blue-400" />
+      </div>
       {subtitle && (
-        <p className="mt-3 max-w-2xl text-muted-foreground md:text-lg mx-auto">{subtitle}</p>
+        <p className="mt-4 max-w-2xl text-muted-foreground md:text-lg mx-auto">{subtitle}</p>
       )}
     </motion.div>
   );

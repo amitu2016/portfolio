@@ -18,7 +18,7 @@ export function ProjectGallery() {
         <SectionHeading
           eyebrow="Portfolio"
           title="Featured Projects"
-          subtitle="Production systems built at an Indian Private bank and an Autonomous Society of MeitY, GOI — engineered for reliability, performance, and scale."
+          subtitle="Production systems engineered for India's banking and government fintech sector — built for reliability, peak performance, and massive scale."
         />
 
         {/* Featured grid */}
