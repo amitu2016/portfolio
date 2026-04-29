@@ -1,6 +1,6 @@
 ---
 title: "Observability Engineering: ELK Stack, Prometheus, and OpenTelemetry in Practice"
-excerpt: "A practitioner's guide to building real observability — structured logging with ELK, metrics with Prometheus/Grafana, and distributed tracing with OpenTelemetry — drawn from 8 years of production experience at CDAC and HDFC Bank."
+excerpt: "A practitioner's guide to building real observability — structured logging with ELK, metrics with Prometheus/Grafana, and distributed tracing with OpenTelemetry — drawn from 8 years of production experience at CDAC and Indian Private bank."
 date: "2025-05-14"
 tags: ["observability", "elk-stack", "prometheus", "opentelemetry", "spring-boot"]
 readTime: 10
@@ -8,7 +8,7 @@ readTime: 10
 
 ## Why Observability is an Engineering Discipline, Not a Tool
 
-After 8 years working on distributed systems — first at CDAC and now at HDFC Bank — the single biggest factor separating teams that recover from incidents in minutes versus hours is **observability**. Not the specific tools. The discipline.
+After 8 years working on distributed systems — first at CDAC and now at Indian Private bank — the single biggest factor separating teams that recover from incidents in minutes versus hours is **observability**. Not the specific tools. The discipline.
 
 Observability means you can answer "what is my system doing right now?" without needing a new deployment or a code change. This post covers the three pillars — logs, metrics, traces — with concrete patterns from production.
 
@@ -70,7 +70,7 @@ public class CorrelationIdFilter implements Filter {
 
 ## Pillar 2: Metrics with Prometheus and Grafana
 
-Logs tell you what happened. Metrics tell you **how your system is behaving over time**. At HDFC Bank, configuring Prometheus/Grafana dashboards was one of my first deliverables.
+Logs tell you what happened. Metrics tell you **how your system is behaving over time**. At Indian Private bank, configuring Prometheus/Grafana dashboards was one of my first deliverables.
 
 Spring Boot Actuator + Micrometer gives you metrics for free:
 
@@ -123,7 +123,7 @@ The `publishPercentiles` on the timer is key — you want P99 latency visible in
 
 ## Pillar 3: Distributed Tracing with OpenTelemetry
 
-Logs and metrics tell you that *something* is wrong. Traces tell you *where* in a multi-service flow it went wrong. At HDFC Bank, I integrated OpenTelemetry tracing into the standardized observability library so every service gets tracing for free.
+Logs and metrics tell you that *something* is wrong. Traces tell you *where* in a multi-service flow it went wrong. At Indian Private bank, I integrated OpenTelemetry tracing into the standardized observability library so every service gets tracing for free.
 
 Spring Boot 3 supports OpenTelemetry via Micrometer Tracing:
 
@@ -148,7 +148,7 @@ management:
       endpoint: http://otel-collector:4318/v1/traces
 ```
 
-Trace context propagates automatically across `RestTemplate`, `WebClient`, and Spring MVC. For Kafka, you need to manually propagate headers (the library we built at HDFC Bank handles this via a custom `ProducerInterceptor`).
+Trace context propagates automatically across `RestTemplate`, `WebClient`, and Spring MVC. For Kafka, you need to manually propagate headers (the library we built at Indian Private bank handles this via a custom `ProducerInterceptor`).
 
 **Sampling strategy matters.** 100% sampling at production TPS is cost-prohibitive. We sample:
 - 100% of all **error** responses (5xx)

@@ -5,9 +5,9 @@ export const projects: Project[] = [
     id: "resilience-utility-lib",
     title: "Resilience & Utility Library",
     description:
-      "Custom shared library standardizing cross-cutting concerns — retry, exponential backoff, circuit breakers, and observability hooks — across banking microservices at HDFC Bank.",
+      "Custom shared library standardizing cross-cutting concerns — retry, exponential backoff, circuit breakers, and observability hooks — across banking microservices at Indian Private bank.",
     longDescription:
-      "Architected at HDFC Bank to resolve stability issues across multiple microservices. Provides a configurable retry engine with exponential backoff, Resilience4j circuit breakers, standardized Prometheus/Grafana observability hooks, and automated Database Warmup routines that eliminated cold-start latency across all dependent services.",
+      "Architected at Indian Private bank to resolve stability issues across multiple microservices. Provides a configurable retry engine with exponential backoff, Resilience4j circuit breakers, standardized Prometheus/Grafana observability hooks, and automated Database Warmup routines that eliminated cold-start latency across all dependent services.",
     tech: ["Java", "Spring Boot", "Resilience4j", "Prometheus", "Grafana", "PostgreSQL"],
     category: "backend",
     featured: true,
@@ -19,7 +19,7 @@ export const projects: Project[] = [
     description:
       "Connection pool initialization routines that pre-warm database connections at service startup, eliminating cold-start latency in production banking systems.",
     longDescription:
-      "Implemented at HDFC Bank to solve cold-start latency spikes observed when microservices were scaled or restarted. The warmup routine pre-initialises HikariCP connection pools and executes lightweight validation queries against PostgreSQL and Yugabyte DB, ensuring the first real transaction sees a warm pool.",
+      "Implemented at Indian Private bank to solve cold-start latency spikes observed when microservices were scaled or restarted. The warmup routine pre-initialises HikariCP connection pools and executes lightweight validation queries against PostgreSQL and Yugabyte DB, ensuring the first real transaction sees a warm pool.",
     tech: ["Java", "Spring Boot", "PostgreSQL", "Yugabyte DB", "HikariCP"],
     category: "backend",
     featured: true,
@@ -65,9 +65,9 @@ export const projects: Project[] = [
     id: "observability-hooks",
     title: "Prometheus + Grafana Dashboards",
     description:
-      "Standardized observability hooks across microservices at HDFC Bank with real-time Prometheus metrics and Grafana dashboards.",
+      "Standardized observability hooks across microservices at Indian Private bank with real-time Prometheus metrics and Grafana dashboards.",
     longDescription:
-      "Developed a standard observability library at HDFC Bank that auto-instruments every microservice with Prometheus metrics (JVM, HTTP, DB connection pool, custom business metrics). Configured Grafana dashboards for real-time monitoring of service health, latency histograms, and error rates across the banking platform.",
+      "Developed a standard observability library at Indian Private bank that auto-instruments every microservice with Prometheus metrics (JVM, HTTP, DB connection pool, custom business metrics). Configured Grafana dashboards for real-time monitoring of service health, latency histograms, and error rates across the banking platform.",
     tech: ["Prometheus", "Grafana", "Micrometer", "Spring Boot Actuator", "OpenTelemetry"],
     category: "devops",
     featured: false,
