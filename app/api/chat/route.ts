@@ -6,29 +6,71 @@ import { buildSystemPrompt } from "@/lib/ai/prompts";
 export const runtime = "edge";
 export const maxDuration = 30;
 
-const openrouter = createOpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY ?? "",
-  headers: {
-    // OpenRouter requires these for rate-limiting and analytics
-    "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-    "X-Title": "Amit Upadhyay Portfolio",
-  },
+const deepseek = createOpenAI({
+  baseURL: "https://api.deepseek.com",
+  apiKey: process.env.DEEPSEEK_API_KEY ?? "",
 });
 
-const MODEL = "openai/gpt-oss-120b:free";
+const MODEL = "deepseek-chat";
+
+const MAX_MESSAGE_LENGTH = 500;
+const MAX_MESSAGES = 20;
+
+const INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?(previous|prior|above|your)\s+instructions/i,
+  /you\s+are\s+now\s+(a\s+)?(?!amit)/i,
+  /act\s+as\s+(a\s+)?(?!amit)/i,
+  /pretend\s+(you\s+are|to\s+be)/i,
+  /reveal\s+(your\s+)?(system\s+)?prompt/i,
+  /print\s+(your\s+)?(system\s+)?prompt/i,
+  /show\s+(me\s+)?(your\s+)?(system\s+)?instructions/i,
+  /jailbreak/i,
+  /dan\s+mode/i,
+];
+
+function looksLikeInjection(text: string): boolean {
+  return INJECTION_PATTERNS.some((re) => re.test(text));
+}
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const body = await req.json();
+  const raw: unknown[] = Array.isArray(body?.messages) ? body.messages : [];
 
-  const lastUserMessage: string =
-    messages.findLast((m: { role: string }) => m.role === "user")?.content ?? "";
+  // Only accept user/assistant turns from the client; drop any injected system/tool roles
+  // and cap length to limit prompt injection surface
+  const messages = raw
+    .filter(
+      (m): m is { role: "user" | "assistant"; content: string } =>
+        typeof m === "object" &&
+        m !== null &&
+        ((m as { role: string }).role === "user" ||
+          (m as { role: string }).role === "assistant")
+    )
+    .slice(-MAX_MESSAGES)
+    .map((m) => ({
+      role: m.role,
+      content: String(m.content).slice(0, MAX_MESSAGE_LENGTH),
+    }));
+
+  const lastUserMessage =
+    messages.findLast((m) => m.role === "user")?.content ?? "";
+
+  if (!lastUserMessage) {
+    return new Response("Bad Request", { status: 400 });
+  }
+
+  if (looksLikeInjection(lastUserMessage)) {
+    return new Response(
+      JSON.stringify({ error: "Message not allowed." }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
   const context = retrieveContext(lastUserMessage, 3);
   const systemPrompt = buildSystemPrompt(context);
 
   const result = streamText({
-    model: openrouter(MODEL),
+    model: deepseek(MODEL),
     system: systemPrompt,
     messages,
     maxTokens: 400,
